@@ -1,60 +1,61 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
-import { useState } from "react";
+import { FC, useState } from "react";
+import { OpenAiResponse } from "@/types";
 
-export function Chat() {
+export const Chat: FC<{
+  setLoading: (isLoading: boolean) => void;
+  setMessage: (message: OpenAiResponse) => void;
+}> = ({ setLoading, setMessage }) => {
   const [input, setInput] = useState("");
-  const { messages, sendMessage } = useChat();
-  return (
-    <div className="flex flex-col w-full max-w-2xl h-[50vh]">
-      {/* Messages Container with Fixed Height and Scroll */}
-      <div className="flex-1 overflow-y-scroll mb-4 p-4 border border-zinc-200 dark:border-zinc-800 rounded-lg bg-zinc-50 dark:bg-zinc-900/50">
-        {messages.length === 0 ? (
-          <div className="text-center text-zinc-500 dark:text-zinc-400 mt-8">
-            <p>Start a conversation...</p>
-          </div>
-        ) : (
-          messages.map((message) => (
-            <div key={message.id} className="mb-4 last:mb-0">
-              <div
-                className={`font-bold text-sm mb-1 ${
-                  message.role === "user"
-                    ? "text-black dark:text-white"
-                    : "text-zinc-600 dark:text-zinc-300"
-                }`}
-              >
-                {message.role === "user" ? "User:" : "AI:"}
-              </div>
-              <div className="whitespace-pre-wrap text-black dark:text-white">
-                {message.parts.map((part, i) => {
-                  switch (part.type) {
-                    case "text":
-                      return <div key={`${message.id}-${i}`}>{part.text}</div>;
-                  }
-                })}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
 
-      {/* Input Form - Fixed at Bottom */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          sendMessage({ text: input });
-          setInput("");
-        }}
-        className="flex-shrink-0"
-      >
-        <input
-          className="w-full p-3 border border-zinc-300 dark:border-zinc-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white bg-white dark:bg-zinc-800 text-black dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400"
-          value={input}
-          placeholder="Say something..."
-          onChange={(e) => setInput(e.currentTarget.value)}
-        />
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    setLoading(true);
+    const currentInput = input;
+    setInput("");
+
+    try {
+      const response = await fetch("/api/open-ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: currentInput }),
+      });
+
+      const parsedResponse: { response: string } = await response.json();
+      const message: OpenAiResponse = JSON.parse(parsedResponse.response);
+      
+      setMessage(message);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="w-full max-w-xl">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="border-2 border-black bg-white">
+          <input
+            className="w-full p-6 text-lg font-medium bg-transparent border-none outline-none placeholder-gray-500"
+            value={input}
+            placeholder="Enter company name..."
+            onChange={(e) => setInput(e.currentTarget.value)}
+            disabled={false}
+          />
+        </div>
+        
+        <button
+          type="submit"
+          disabled={!input.trim()}
+          className="w-full bg-black text-white p-4 text-lg font-bold uppercase tracking-wide hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
+          ANALYZE BIAS
+        </button>
       </form>
     </div>
   );
-}
+};
