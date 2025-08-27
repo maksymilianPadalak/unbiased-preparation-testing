@@ -3,6 +3,7 @@ import { Chat } from "@/components/chat/Chat";
 import { Fragment, useState } from "react";
 import { OpenAiResponse } from "@/types";
 import Link from "next/link";
+import { Chart } from "@/components/chart";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -27,21 +28,48 @@ export default function Home() {
           </div>
         </div>
 
+        <div>
+          <Chart />
+        </div>
+
         <div className="flex flex-col">
-          {/* Main Title */}
-          <div className="w-full mb-12 border-b-4 border-black pb-6">
-            <h1 className="text-4xl md:text-6xl font-black text-black uppercase tracking-wider leading-none">
-              {message?.name || "WAITING FOR YOUR PROMPT"}
-            </h1>
-            {loading && (
-              <div className="mt-4 flex items-center gap-3">
-                <div className="w-3 h-3 bg-black animate-pulse"></div>
-                <span className="text-lg font-bold uppercase tracking-wide">
-                  ANALYZING...
-                </span>
+          {!message && !loading ? (
+            /* Initial State - No message */
+            <div className="flex flex-col items-center justify-center space-y-12 min-h-[60vh]">
+              <div className="text-center space-y-8">
+                <div className="w-32 h-32 border-4 border-black bg-white flex items-center justify-center mx-auto">
+                  <div className="text-6xl font-black text-black">?</div>
+                </div>
+
+                <div>
+                  <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-wider mb-4">
+                    READY TO EXPOSE
+                  </h2>
+                  <p className="text-xl text-gray-700 max-w-md mx-auto leading-relaxed font-medium">
+                    Enter any company name above to reveal their bias score,
+                    hidden agendas, and controversial practices.
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            /* Results State */
+            <div className="w-full mb-12 border-b-4 border-black pb-6">
+              {message?.name && (
+                <h1 className="text-4xl md:text-6xl font-black text-black uppercase tracking-wider leading-none">
+                  {message?.name}
+                </h1>
+              )}
+              {loading && (
+                <div className="mt-4 flex items-center gap-3">
+                  <div className="w-3 h-3 bg-black animate-pulse"></div>
+                  <span className="text-lg font-bold uppercase tracking-wide">
+                    ANALYZING...
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
 
           {message && (
             <div className="w-full space-y-8">
@@ -79,7 +107,7 @@ export default function Home() {
                     MARKETING BUDGET
                   </h2>
                   <p className="text-3xl font-black text-black">
-                    ${message.moneySpentLastYearForMarketing}
+                    {message.moneySpentLastYearForMarketing}
                   </p>
                 </div>
               )}

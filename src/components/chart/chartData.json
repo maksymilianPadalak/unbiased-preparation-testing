@@ -1,0 +1,23 @@
+[
+  {
+    "id": "global_smoking_deaths_ihme_gbd",
+    "data": [
+      { "x": "2012", "y": 6926000 },
+      { "x": "2013", "y": 7041000 },
+      { "x": "2014", "y": 7158000 },
+      { "x": "2015", "y": 7283000 },
+      { "x": "2016", "y": 7398000 },
+      { "x": "2017", "y": 7512000 },
+      { "x": "2018", "y": 7531000 },
+      { "x": "2019", "y": 7689000 },
+      { "x": "2020", "y": 7061000 },
+      { "x": "2021", "y": 7114000 }
+    ],
+    "meta": {
+      "measure": "Annual deaths attributable to tobacco smoking (direct)",
+      "unit": "people",
+      "source": "IHME, Global Burden of Disease 2021 (republished by Our World in Data, last updated May 20, 2024)",
+      "notes": "Excludes deaths from secondhand smoke; global total ('World')."
+    }
+  }
+]

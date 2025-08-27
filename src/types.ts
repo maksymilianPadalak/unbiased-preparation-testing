@@ -2,6 +2,6 @@ export type OpenAiResponse = {
   name: string;
   score: number;
   description: string;
-  moneySpentLastYearForMarketing: number;
+  moneySpentLastYearForMarketing: string;
   claims: { claim: string; article: string }[];
 };
