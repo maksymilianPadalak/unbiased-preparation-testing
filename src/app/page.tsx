@@ -1,9 +1,8 @@
 "use client";
 import { Chat } from "@/components/chat/Chat";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { OpenAiResponse } from "@/types";
 import Link from "next/link";
-import { Chart } from "@/components/chart";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -28,9 +27,9 @@ export default function Home() {
           </div>
         </div>
 
-        <div>
-          <Chart />
-        </div>
+        {/*<div>*/}
+        {/*  <Chart />*/}
+        {/*</div>*/}
 
         <div className="flex flex-col">
           {!message && !loading ? (

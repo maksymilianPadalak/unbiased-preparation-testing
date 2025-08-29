@@ -1,12 +1,8 @@
-import { openai } from "@ai-sdk/openai";
-import { generateText } from "ai";
+import OpenAI from "openai";
 
-export async function POST(req: Request) {
-  const { prompt } = await req.json();
+const client = new OpenAI();
 
-  const result = await generateText({
-    model: openai("gpt-4"),
-    system: `You are activist fighting for better world. You will be given a company name, please assess their ethical score from 0/10 with step 0.1
+const systemPrompt = `You are activist fighting for better world. You will be given a company name, please assess their ethical score from 0/10 with step 0.1
     
     Let name be the name of the company, description argumentation in few words why this score
     moneySpentLastYearForMarketing - include seo and impact on LLMs from 2024, please provide it in format like 7 million instead of 7000000
@@ -20,11 +16,17 @@ export async function POST(req: Request) {
     - Never fabricate slugs. If unsure, give outlet, title, date, and url = null.
     
     Return response as Json object in shape:
-    {name: string, score: number, description: string, moneySpentLastYearForMarketing: string, claims: { claim: string; article: string }[]}`,
-    prompt,
+    {name: string, score: number, description: string, moneySpentLastYearForMarketing: string, claims: { claim: string; article: string }[]}`;
+
+export async function POST(req: Request) {
+  const { prompt } = await req.json();
+
+  const response = await client.responses.create({
+    model: "o4-mini",
+    input: prompt,
+    instructions: systemPrompt,
+    tools: [{ type: "web_search" }],
   });
 
-  const response = result.text;
-
-  return new Response(JSON.stringify({ response }));
+  return new Response(JSON.stringify({ response: response.output_text }));
 }
