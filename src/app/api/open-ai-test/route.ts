@@ -6,7 +6,8 @@ export async function POST(req: Request) {
   const { prompt } = await req.json();
 
   const response = await client.responses.create({
-    model: "gpt-5-nano",
+    model: "gpt-4o-mini",
+    tools: [{ type: "web_search" }],
     input: prompt,
   });
 

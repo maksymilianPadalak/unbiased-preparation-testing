@@ -14,13 +14,14 @@ const Test = () => {
     const response = await fetch("http://localhost:3000/api/open-ai-test", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: "Hi" }),
+      body: JSON.stringify({ prompt: input }),
     });
 
     const parsedResponse = await response.json();
 
     setResponse(parsedResponse.response);
     setIsLoading(false);
+    setInput("");
   };
 
   return (
@@ -28,16 +29,23 @@ const Test = () => {
       className={"h-screen w-screen flex flex-col justify-center items-center"}
     >
       <div className={"flex items-center gap-6 mb-6"}>
-        <input
+        <textarea
           className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black outline-none"
           placeholder={"Type your prompt"}
           onChange={(e) => setInput(e.target.value)}
           value={input}
+          onKeyDown={async (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              await getResponse();
+            }
+          }}
+          rows={10}
         />
         <button
           className={`disabled:opacity-15 disabled:cursor-not-allowed hover:cursor-pointer rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:border-black hover:text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1`}
           disabled={isLoading}
-          onClick={getResponse}
+          onClick={async () => await getResponse()}
         >
           Submit prompt
         </button>
